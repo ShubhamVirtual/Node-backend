@@ -16,8 +16,13 @@ mongoose.connect(URL,{
 });
 
 const app = express();
-const port = 8080;
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 require('./app/routes')(app, {});
 
+const port = 8080;
+
 app.listen(port, () => {  console.log('We are live on ' + port);});
+
+module.exports = app;
