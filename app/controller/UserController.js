@@ -23,8 +23,10 @@ exports.create = (req, res) => {
     
         // Create a Note
         var User = new userModel({
-            name: req.body.name, 
-            phone: req.body.phone
+            name:   req.body.name, 
+            phone:  req.body.phone,
+            email:  req.body.email,
+            subject: req.body.subject
         });
     
         // Save Note in the database
