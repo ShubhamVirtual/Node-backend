@@ -1,5 +1,6 @@
-var userModel = require('../model/UserModel');
+var userRegModel = require('../model/UserRegModel');
 const mongoose = require("mongoose");
+const bcrypt = require('bcrypt');
 // console.log("RRRR ", proModel)
 // Create and Save a new Note
 
@@ -7,7 +8,7 @@ exports.test = function (req, res) {
     res.send('Greetings from the Test controller!');
 };
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
 
         // Validate request
         // res.send(req.body.name);
@@ -23,30 +24,39 @@ exports.create = (req, res) => {
         // }
     
         // Create a Note
-        var User = new userModel({
-            name:   req.body.name, 
-           
-            email:  req.body.email,
-            subject: req.body.subject
-        });
-    
-        // Save Note in the database
-        User.save()
-        .then(data => {
-            res.send({"status":"Success"});
-        
-        }).catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the Note."
+   
+        const checkUser = await userRegModel.findOne({ email:req.body.email });
+
+        if (checkUser) {
+          return res.status(409).send("User Already Exist. Please Login");
+        }
+
+            let hashPassword =  await bcrypt.hash(req.body.password,10);
+
+            var User = new userRegModel({
+                name:   req.body.name, 
+            
+                email:  req.body.email,
+                password: hashPassword
             });
-        });
+        
+            // Save Note in the database
+            User.save()
+            .then(data => {
+                res.send(data);
+            
+            }).catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while creating the Note."
+                });
+            });
 
 };
 
 // Retrieve and return all notes from the database.
 exports.findAll = (req, res) => {
 
-    userModel.find()
+    userRegModel.find()
     .then(notes => {
         res.send(notes);
     }).catch(err => {
@@ -60,7 +70,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
 
     // res.send(req.params.id);
-    userModel.findById(req.params.id)
+    userRegModel.findById(req.params.id)
     .then(user =>{
         res.send(user);
     }).catch(err => {
@@ -74,7 +84,7 @@ exports.findOne = (req, res) => {
 
 // Update a note identified by the noteId in the request
 exports.update = (req, res) => {
-    userModel.findByIdAndUpdate(req.params.id, {$set: req.body} )
+    userRegModel.findByIdAndUpdate(req.params.id, {$set: req.body} )
     .then( update => {
         res.send('User udpated.');
     }).catch(err => {
@@ -115,7 +125,7 @@ exports.findByParams = (req, res) => {
     // });
     // res.send(req.body.name);
     let q = req.body.name;
-    userModel.find({name:{"$regex": q , "$options": "i"}})
+    userRegModel.find({name:{"$regex": q , "$options": "i"}})
     .then(notes => {
         res.send(notes);
     }).catch(err => {
