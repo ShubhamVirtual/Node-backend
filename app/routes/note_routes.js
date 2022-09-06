@@ -1,11 +1,11 @@
 /*module.exports = function(app, db) {
 };*/
+const { adminAuth, userAuth } = require("../middleware/auth.js");
+const usercontroller = require('../controller/UserController');
+const userregcontroller = require('../controller/UserRegController');
+const loginController = require('../controller/LoginController');
 
 module.exports = function(app, db) {  
-
-    const usercontroller = require('../controller/UserController');
-    const userregcontroller = require('../controller/UserRegController');
-    const loginController = require('../controller/LoginController');
 
     app.get('/', (req, res) => {    // You'll create your note here.    
         res.send('Hello')
@@ -26,5 +26,10 @@ module.exports = function(app, db) {
 
     // for login
     app.post('/login', loginController.login);
+
+
+    app.get('/admin', adminAuth,usercontroller.findByAdmin);
+    app.get('/user', adminAuth,usercontroller.findByUser);
+    app.get('/logout',usercontroller.logout)
 
 };

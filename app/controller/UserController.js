@@ -125,3 +125,23 @@ exports.findByParams = (req, res) => {
     });
 
 }
+
+// For Admin Auth
+
+exports.findByAdmin= (req, res) => {
+
+    res.send('Admin Route');
+}
+
+exports.findByUser= (req, res) => {
+
+    res.send('User Route');
+}
+
+exports.logout = (req,res)=>{
+
+
+    res.cookie("jwt", "", { maxAge: "1" });
+    res.send("Logged out!");
+}
+

@@ -4,7 +4,8 @@ var Schema = MongoClient.Schema;
 var userRegSchema = new MongoClient.Schema({
     name: String,
     email:String,
-    password:String
+    password:String,
+    role:String
 }, {
     timestamps: true
 });

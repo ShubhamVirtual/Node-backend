@@ -19,13 +19,18 @@ exports.login = async (req, res) => {
 
     if(checkUser && bcrypt.compare(req.body.password,checkUser.password))
     {
+        let maxAge = 3 * 60 * 60;
         const token = await jwt.sign(
-            { user_id: checkUser._id, user_email:checkUser.email },
+            { user_id: checkUser._id, user_email:checkUser.email,role:checkUser.role },
             TOKEN_KEY,
             {
-              expiresIn: "2h",
+              expiresIn: maxAge,
             }
           );
+          res.cookie("jwt", token, {
+            httpOnly: true,
+            maxAge: maxAge * 1000, // 3hrs in ms
+          });
 
           // save user token
         //   checkUser.utoken = token;

@@ -35,9 +35,9 @@ exports.create = async (req, res) => {
 
             var User = new userRegModel({
                 name:   req.body.name, 
-            
                 email:  req.body.email,
-                password: hashPassword
+                password: hashPassword,
+                role: req.body.role
             });
         
             // Save Note in the database
